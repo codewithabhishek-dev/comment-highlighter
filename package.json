@@ -1,0 +1,191 @@
+{
+  "name": "comment-highlighter",
+  "displayName": "Comment Highlighter",
+  "description": "Highlight selected text within code comments with a background color",
+  "version": "0.0.1",
+  "publisher": "your-name",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:python",
+    "onLanguage:javascript",
+    "onLanguage:typescript",
+    "onLanguage:java",
+    "onLanguage:csharp",
+    "onLanguage:cpp",
+    "onLanguage:c",
+    "onLanguage:go",
+    "onLanguage:rust",
+    "onLanguage:php",
+    "onLanguage:ruby",
+    "onLanguage:swift",
+    "onLanguage:kotlin",
+    "onLanguage:scala",
+    "onLanguage:html",
+    "onLanguage:xml",
+    "onLanguage:css",
+    "onLanguage:scss",
+    "onLanguage:less",
+    "onLanguage:json",
+    "onLanguage:yaml",
+    "onLanguage:markdown",
+    "onLanguage:sql",
+    "onLanguage:shell",
+    "onLanguage:bash",
+    "onLanguage:powershell",
+    "onLanguage:dockerfile",
+    "onLanguage:r",
+    "onLanguage:julia",
+    "onLanguage:perl",
+    "onLanguage:lua",
+    "onLanguage:haskell",
+    "onLanguage:elm",
+    "onLanguage:fsharp",
+    "onLanguage:ocaml",
+    "onLanguage:clojure",
+    "onLanguage:scheme",
+    "onLanguage:racket",
+    "onLanguage:commonlisp",
+    "onLanguage:erlang",
+    "onLanguage:elixir",
+    "onLanguage:dart",
+    "onLanguage:vue",
+    "onLanguage:svelte"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "comment-highlighter.highlight",
+        "title": "Highlight Comment",
+        "category": "Comment Highlighter"
+      },
+      {
+        "command": "comment-highlighter.removeHighlight",
+        "title": "Remove Highlight",
+        "category": "Comment Highlighter"
+      },
+      {
+        "command": "comment-highlighter.highlight.yellow",
+        "title": "🟨 Yellow",
+        "category": "Comment Highlighter"
+      },
+      {
+        "command": "comment-highlighter.highlight.green",
+        "title": "🟩 Green",
+        "category": "Comment Highlighter"
+      },
+      {
+        "command": "comment-highlighter.highlight.blue",
+        "title": "🟦 Blue",
+        "category": "Comment Highlighter"
+      },
+      {
+        "command": "comment-highlighter.highlight.red",
+        "title": "🟥 Red",
+        "category": "Comment Highlighter"
+      },
+      {
+        "command": "comment-highlighter.highlight.purple",
+        "title": "🟪 Purple",
+        "category": "Comment Highlighter"
+      },
+      {
+        "command": "comment-highlighter.debug",
+        "title": "Debug Comment Detection",
+        "category": "Comment Highlighter"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "comment-highlighter.highlight",
+          "when": "editorHasSelection",
+          "group": "comment-highlighter@1"
+        },
+        {
+          "submenu": "comment-highlighter.highlightMenu",
+          "when": "editorHasSelection",
+          "group": "comment-highlighter@1"
+        },
+        {
+          "command": "comment-highlighter.removeHighlight",
+          "when": "editorHasSelection",
+          "group": "comment-highlighter@2"
+        }
+      ]
+    },
+    "submenus": [
+      {
+        "id": "comment-highlighter.highlightMenu",
+        "label": "Highlight Comment",
+        "children": [
+          {
+            "command": "comment-highlighter.highlight.yellow",
+            "when": "editorHasSelection"
+          },
+          {
+            "command": "comment-highlighter.highlight.green",
+            "when": "editorHasSelection"
+          },
+          {
+            "command": "comment-highlighter.highlight.blue",
+            "when": "editorHasSelection"
+          },
+          {
+            "command": "comment-highlighter.highlight.red",
+            "when": "editorHasSelection"
+          },
+          {
+            "command": "comment-highlighter.highlight.purple",
+            "when": "editorHasSelection"
+          }
+        ]
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "comment-highlighter.highlight",
+        "key": "ctrl+alt+h",
+        "mac": "cmd+alt+h",
+        "when": "editorTextFocus",
+        "args": { "color": "#ffff00" }
+      },
+      {
+        "command": "comment-highlighter.removeHighlight",
+        "key": "ctrl+alt+shift+h",
+        "mac": "cmd+alt+shift+h",
+        "when": "editorTextFocus"
+      }
+    ],
+    "configuration": {
+      "title": "Comment Highlighter",
+      "properties": {
+        "commentHighlighter.highlightColor": {
+          "type": "string",
+          "default": "#ffff00",
+          "description": "Background color for highlighted text (hex or CSS color name)"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile",
+    "lint": "eslint src --ext ts",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^2.15.0",
+    "eslint": "^8.55.0",
+    "typescript": "^5.3.0"
+  }
+}
