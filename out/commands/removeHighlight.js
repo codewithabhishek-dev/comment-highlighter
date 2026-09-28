@@ -56,8 +56,18 @@ async function removeHighlightCommand() {
     if (!selection.isEmpty && editor.selections.length === 1) {
         const detectionResult = await (0, commentDetection_1.detectComment)(editor, selection);
         if (detectionResult.isInComment && detectionResult.commentRange) {
+            const range = detectionResult.commentRange.range;
+            // Check if this range is highlighted and get the actual color
+            const highlightInfo = (0, decorations_1.isRangeHighlighted)(editor, range);
+            if (highlightInfo.highlighted && highlightInfo.color) {
+                // Use the actual highlight color to remove it
+                await (0, decorations_1.removeHighlight)(editor, range, { color: highlightInfo.color });
+                vscode.window.showInformationMessage('Highlight removed from selection');
+                return;
+            }
+            // If not highlighted but in a comment, try with default color (for backward compatibility)
             const color = (0, decorations_1.getHighlightColor)();
-            await (0, decorations_1.removeHighlight)(editor, detectionResult.commentRange.range, { color });
+            await (0, decorations_1.removeHighlight)(editor, range, { color });
             vscode.window.showInformationMessage('Highlight removed from selection');
             return;
         }
