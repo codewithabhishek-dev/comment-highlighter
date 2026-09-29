@@ -6,6 +6,11 @@
   "publisher": "abhishekbhatta",
   "icon": "images/icon.png",
 
+    "repository": {
+    "type": "git",
+    "url": "https://github.com/codewithabhishek-dev/comment-highlighter.git"
+  },
+
   "engines": {
     "vscode": "^1.85.0"
   },
