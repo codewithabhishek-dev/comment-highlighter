@@ -167,6 +167,85 @@ function isRangeInBlockComment(
 }
 
 /**
+ * Finds the boundaries of a multi-line block comment containing the given position
+ * Scans backwards for blockStart and forwards for blockEnd
+ */
+function findMultiLineBlockCommentBounds(
+  document: vscode.TextDocument,
+  position: vscode.Position,
+  blockStart: string,
+  blockEnd: string
+): { startLine: number; startChar: number; endLine: number; endChar: number } | null {
+  const text = document.getText();
+  const offset = document.offsetAt(position);
+  
+  // Find the last blockStart before the position
+  let lastStartIndex = -1;
+  let searchIndex = 0;
+  while (true) {
+    const found = text.indexOf(blockStart, searchIndex);
+    if (found === -1 || found >= offset) {
+      break;
+    }
+    lastStartIndex = found;
+    searchIndex = found + blockStart.length;
+  }
+  
+  if (lastStartIndex === -1) {
+    return null;
+  }
+  
+  // Find the first blockEnd after the lastStartIndex
+  const endIndex = text.indexOf(blockEnd, lastStartIndex + blockStart.length);
+  if (endIndex === -1) {
+    return null;
+  }
+  
+  // Check if position is within this block comment
+  if (offset >= lastStartIndex + blockStart.length && offset <= endIndex) {
+    const startPos = document.positionAt(lastStartIndex + blockStart.length);
+    const endPos = document.positionAt(endIndex);
+    return {
+      startLine: startPos.line,
+      startChar: startPos.character,
+      endLine: endPos.line,
+      endChar: endPos.character
+    };
+  }
+  
+  return null;
+}
+
+/**
+ * Checks if a range is inside a multi-line block comment
+ */
+function isRangeInMultiLineBlockComment(
+  document: vscode.TextDocument,
+  range: vscode.Range,
+  blockStart: string,
+  blockEnd: string
+): { isInComment: boolean; commentRange?: vscode.Range } {
+  // Check if both start and end of selection are within the same multi-line block comment
+  const startBounds = findMultiLineBlockCommentBounds(document, range.start, blockStart, blockEnd);
+  const endBounds = findMultiLineBlockCommentBounds(document, range.end, blockStart, blockEnd);
+  
+  if (startBounds && endBounds && 
+      startBounds.startLine === endBounds.startLine && 
+      startBounds.startChar === endBounds.startChar &&
+      startBounds.endLine === endBounds.endLine && 
+      startBounds.endChar === endBounds.endChar) {
+    // Both positions are in the same block comment
+    const commentRange = new vscode.Range(
+      startBounds.startLine, startBounds.startChar,
+      endBounds.endLine, endBounds.endChar
+    );
+    return { isInComment: true, commentRange };
+  }
+  
+  return { isInComment: false };
+}
+
+/**
  * Main comment detection using hardcoded tokens
  * This is synchronous and fast
  */
@@ -225,6 +304,20 @@ function detectCommentInternal(
         selectedText,
       };
     }
+    
+    // Try multi-line block comment
+    const multiLineResult = isRangeInMultiLineBlockComment(document, selection, tokens.blockCommentStart, tokens.blockCommentEnd);
+    if (multiLineResult.isInComment && multiLineResult.commentRange) {
+      return {
+        isInComment: true,
+        commentRange: {
+          range: multiLineResult.commentRange,
+          commentSyntax: `${tokens.blockCommentStart}...${tokens.blockCommentEnd}`,
+          isBlockComment: true,
+        },
+        selectedText,
+      };
+    }
   }
   
   return { isInComment: false, selectedText };
@@ -260,4 +353,19 @@ export function isRangeInComment(
 ): boolean {
   const result = detectCommentInternal(document, new vscode.Selection(range.start, range.end));
   return result.isInComment;
+}
+
+/**
+ * Gets the full comment range for a given range (used for highlighting the entire comment)
+ * This is useful for multi-line block comments where we want to highlight the entire comment block
+ */
+export function getFullCommentRange(
+  document: vscode.TextDocument,
+  range: vscode.Range
+): vscode.Range | null {
+  const result = detectCommentInternal(document, new vscode.Selection(range.start, range.end));
+  if (result.isInComment && result.commentRange) {
+    return result.commentRange.range;
+  }
+  return null;
 }

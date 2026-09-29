@@ -1,8 +1,8 @@
 {
-  "name": "comment-highlighter",
-  "displayName": "Comment Highlighter",
+  "name": "comment-text-highlighter",
+  "displayName": "Comment Text Highlighter",
   "description": "Highlight important text inside code comments with customizable colors directly in Visual Studio Code.",
-  "version": "1.0.0",
+   "version": "1.0.0",
   "publisher": "abhishekbhatta",
   "icon": "images/icon.png",
 
@@ -122,18 +122,13 @@
     "menus": {
       "editor/context": [
         {
-          "command": "comment-highlighter.highlight",
-          "when": "editorHasSelection",
-          "group": "comment-highlighter@1"
-        },
-        {
           "submenu": "comment-highlighter.highlightMenu",
           "when": "editorHasSelection",
           "group": "comment-highlighter@1"
         },
         {
           "command": "comment-highlighter.removeHighlight",
-          "when": "editorHasSelection",
+          "when": "commentHighlighter.hasHighlight",
           "group": "comment-highlighter@2"
         }
       ]

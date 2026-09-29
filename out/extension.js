@@ -48,6 +48,10 @@ const commentDetection_1 = require("./utils/commentDetection");
  */
 const IN_COMMENT_CONTEXT_KEY = 'commentHighlighter.inComment';
 /**
+ * Context key for when selection has a highlight
+ */
+const HAS_HIGHLIGHT_CONTEXT_KEY = 'commentHighlighter.hasHighlight';
+/**
  * Activates the extension
  */
 async function activate(context) {
@@ -90,11 +94,20 @@ async function activate(context) {
     const updateContextKey = (editor) => {
         if (!editor || editor.selection.isEmpty) {
             vscode.commands.executeCommand('setContext', IN_COMMENT_CONTEXT_KEY, false);
+            vscode.commands.executeCommand('setContext', HAS_HIGHLIGHT_CONTEXT_KEY, false);
             return;
         }
         // Use synchronous detection for context key (fast)
         const result = (0, commentDetection_1.detectCommentSync)(editor, editor.selection);
         vscode.commands.executeCommand('setContext', IN_COMMENT_CONTEXT_KEY, result.isInComment);
+        // Check if selection has a highlight
+        if (result.isInComment && result.commentRange) {
+            const highlightInfo = (0, decorations_1.isRangeHighlighted)(editor, result.commentRange.range);
+            vscode.commands.executeCommand('setContext', HAS_HIGHLIGHT_CONTEXT_KEY, highlightInfo.highlighted);
+        }
+        else {
+            vscode.commands.executeCommand('setContext', HAS_HIGHLIGHT_CONTEXT_KEY, false);
+        }
     };
     // Update on selection change
     const onDidChangeTextEditorSelection = vscode.window.onDidChangeTextEditorSelection((event) => {

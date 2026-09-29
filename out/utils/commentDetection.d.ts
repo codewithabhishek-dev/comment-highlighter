@@ -17,4 +17,9 @@ export declare function detectCommentSync(editor: vscode.TextEditor, selection: 
  * Checks if a specific range is within a comment (for decoration updates)
  */
 export declare function isRangeInComment(document: vscode.TextDocument, range: vscode.Range): boolean;
+/**
+ * Gets the full comment range for a given range (used for highlighting the entire comment)
+ * This is useful for multi-line block comments where we want to highlight the entire comment block
+ */
+export declare function getFullCommentRange(document: vscode.TextDocument, range: vscode.Range): vscode.Range | null;
 //# sourceMappingURL=commentDetection.d.ts.map
