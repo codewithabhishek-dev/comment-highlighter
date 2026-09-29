@@ -72,6 +72,3 @@ Visual Studio Code 1.xx or later.
 
 Found a bug or have a feature request? Please open an issue on the [GitHub repository](https://github.com/your-username/comment-highlighter/issues).
 
-## License
-
-[MIT](LICENSE)
