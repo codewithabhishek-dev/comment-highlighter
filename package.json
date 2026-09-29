@@ -2,7 +2,7 @@
   "name": "comment-text-highlighter",
   "displayName": "Comment Text Highlighter",
   "description": "Highlight important text inside code comments with customizable colors directly in Visual Studio Code.",
-   "version": "1.0.0",
+   "version": "1.0.1",
   "publisher": "abhishekbhatta",
   "icon": "images/icon.png",
 
